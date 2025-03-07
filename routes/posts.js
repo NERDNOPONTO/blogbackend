@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
     console.error('Erro ao buscar posts:', err);
     res.status(500).json({
       error: 'Erro ao buscar posts',
-      message: process.env.NODE_ENV === 'development' ? err.message : undefined
+      message: process.env.NODE_ENV === 'development' ? err.message : 'Ocorreu um erro ao buscar os posts'
     });
   }
 });
@@ -56,16 +56,24 @@ router.get('/', async (req, res) => {
 // Rota para pegar um post específico
 router.get('/:id', async (req, res) => {
   try {
+    console.log('Buscando post com ID:', req.params.id);
     const post = await Post.findById(req.params.id);
+    
     if (!post) {
-      return res.status(404).json({ error: 'Post não encontrado' });
+      console.log('Post não encontrado');
+      return res.status(404).json({ 
+        error: 'Post não encontrado',
+        message: 'O post solicitado não existe'
+      });
     }
+    
+    console.log('Post encontrado:', post.title);
     res.json(post);
   } catch (err) {
     console.error('Erro ao buscar post:', err);
     res.status(500).json({
       error: 'Erro ao buscar post',
-      message: process.env.NODE_ENV === 'development' ? err.message : undefined
+      message: process.env.NODE_ENV === 'development' ? err.message : 'Ocorreu um erro ao buscar o post'
     });
   }
 });
